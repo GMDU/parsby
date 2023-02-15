@@ -505,4 +505,12 @@ RSpec.describe Parsby::Combinators do
       expect { test_parser.parse("ad") }.to raise_error Parsby::ExpectationFailed
     end
   end
+
+  describe "#regex" do
+    it "matches a regex to a string" do
+      expect(regex(/[A-Z][a-z] ./).parse("Hi !")).to eq "Hi !"
+      expect(regex(/\w+@\w+\.\w+/).parse("user@gmail.com extra")).to eq "user@gmail.com"
+      expect {regex(/\w+@\w+\.\w+/).parse("user@gmail")}.to raise_error Parsby::ExpectationFailed
+    end
+  end
 end

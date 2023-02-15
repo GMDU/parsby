@@ -408,5 +408,22 @@ class Parsby
         block.call(parse)
       end
     end
+
+    # Matches a regular expression
+    define_combinator :regex do |regex|
+      Parsby.new :regex do |target|
+        position = target.bio.pos
+        target_string = target.bio.read
+
+        unless target_string.match?(regex)
+          raise ExpectationFailed.new target
+        end
+
+        match = target_string.match(regex).to_s
+        target.bio.restore_to(position + match.length)
+
+        match
+      end
+    end
   end
 end
