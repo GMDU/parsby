@@ -320,11 +320,11 @@ class Parsby
     # Groups results into an array.
     define_combinator :group do |*ps|
       ps = ps.flatten
-      ~splicer.start do |m|
+      (~splicer.start { |m|
         ps.reduce(empty) do |a, p|
           a << m.end(p)
         end
-      end
+      }).fmap { |result| result.size == 1 ? result.first : result }
     end
 
     # Wraps result in a list. This is to be able to do
