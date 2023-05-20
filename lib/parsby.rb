@@ -105,7 +105,7 @@ class Parsby
     end
 
     def end(p)
-      Parsby.new("splicer.end(#{p.label})") { |c|
+      Parsby.new("splicer.end(#{p.label})", p.ignore) { |c|
         begin
           p.parse c
         ensure
@@ -600,12 +600,14 @@ class Parsby
   end
 
   attr_writer :label
+  attr_accessor :ignore
 
   # Initialize parser with optional label argument, and parsing block. The
   # parsing block is given an IO as argument, and its result is the result
   # when parsing.
-  def initialize(label = nil, &b)
+  def initialize(label = nil, ignore = false, &b)
     self.label = label if label
+    self.ignore = ignore
     @parser = b
   end
 
@@ -706,7 +708,8 @@ class Parsby
       x = parse c
       y = p.parse c
       # like x << y, but without modifying x.
-      x + [y]
+      # return x if it is ignored
+      p.ignore ? x : x + [y]
     end
   end
 
